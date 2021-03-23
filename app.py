@@ -9,10 +9,9 @@ TO_EMAIL=os.getenv('TO_EMAIL')
 PASSWORD=os.getenv('PASSWORD')
 
 EMAIL = False
-if FROM_EMAIL != None and TO_EMAIL != None and PASSWORD != None:
+if type(FROM_EMAIL) != 'NoneType' and type(TO_EMAIL) != 'NoneType' and type(PASSWORD) != 'NoneType':
     EMAIL = True
     
-# replace with the Amazon link you want
 URL = 'https://www.amazon.co.uk/PlayStation-9395003-5-Console/dp/B08H95Y452/ref=sr_1_1?dchild=1&keywords=ps5&qid=1615488436&sr=8-1'
 
 headers = {
@@ -62,4 +61,4 @@ def send_mail():
 
 while True:
     check_availability()
-    time.sleep(10)
+    time.sleep(60)
