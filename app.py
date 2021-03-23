@@ -1,8 +1,17 @@
-import requests
+import os,requests
 from bs4 import BeautifulSoup
 import smtplib, time
-from login import from_email, to_email, password
+from dotenv import load_dotenv
 
+load_dotenv()
+FROM_EMAIL=os.getenv('FROM_EMAIL')
+TO_EMAIL=os.getenv('TO_EMAIL')
+PASSWORD=os.getenv('PASSWORD')
+
+EMAIL = False
+if type(FROM_EMAIL) != 'NoneType' and type(TO_EMAIL) != 'NoneType' and type(PASSWORD) != 'NoneType':
+    EMAIL = True
+    
 URL = 'https://www.amazon.co.uk/PlayStation-9395003-5-Console/dp/B08H95Y452/ref=sr_1_1?dchild=1&keywords=ps5&qid=1615488436&sr=8-1'
 
 headers = {
@@ -19,7 +28,9 @@ def check_availability():
     AVAILABILITY = soup.find(id="availability").get_text()
 
     if 'unavailable' not in AVAILABILITY:
-        send_mail()
+        print(f"{TITLE.strip()} is back in stock.")
+        if EMAIL:
+            send_mail()
     else:
         print(f"{TITLE.strip()} is out of stock.")
 
@@ -31,17 +42,17 @@ def send_mail():
     server.starttls()
     server.ehlo()
 
-    server.login(from_email, password)
+    server.login(FROM_EMAIL, PASSWORD)
 
     subject = "Item is back in stock!"
-    body = "Check the Amazon link:\n\nhttps://www.amazon.co.uk/PlayStation-9395003-5-Console/dp/B08H95Y452/ref=sr_1_1?dchild=1&keywords=ps5&qid=1615488734&sr=8-1"
+    body = f"Check the Amazon link:\n\n{URL}"
 
 
     msg = f"Subject: {subject}\n\n{body}"
 
     server.sendmail(
-        from_email,
-        to_email,
+        FROM_EMAIL,
+        TO_EMAIL,
         msg
     )
     print('EMAIL HAS BEEN SENT!')
